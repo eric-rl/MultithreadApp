@@ -1,6 +1,7 @@
 package com.company;
 
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Main {
 
@@ -8,13 +9,12 @@ public class Main {
         NetworkClient networkClient1 = new NetworkClient();
         NetworkServer networkServer1 = new NetworkServer();
 
-        Thread netWorkThread = new Thread(networkServer1);
-        netWorkThread.start();
 
-        networkClient1.sendMsgToServer("hej");
-
-
-
-
+        System.out.println("Enter your message");
+        Scanner scanner = new Scanner(System.in);
+        boolean run =true;
+        while (run) {
+            networkClient1.sendMsgToServer(scanner.nextLine());
+        }
     }
 }

@@ -4,17 +4,19 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class NetworkClient implements Observer {
+public class NetworkClient {
     private final String SERVER_IP = "localhost";
     private final int MSG_SIZE = 512;
     private final int SLEEP_MS = 100;
-    private boolean isRunning;
+    private boolean isRunning = true;
 
     private DatagramSocket socket;
     private InetAddress serverAddress;
 
     public NetworkClient(){
         try {
+            Thread ClientThread = new Thread(this::run);
+            ClientThread.start();
             serverAddress = InetAddress.getByName(SERVER_IP);
             socket = new DatagramSocket(0, serverAddress);
             socket.setSoTimeout(SLEEP_MS);
@@ -33,11 +35,10 @@ public class NetworkClient implements Observer {
     private void receiveMessageFromServer() {
         byte[] buffer = new byte[MSG_SIZE];
         DatagramPacket response = new DatagramPacket(buffer, buffer.length);
-
         try {
             socket.receive(response);
             String serverMsg = new String(buffer, 0, response.getLength());
-            System.out.println(serverMsg); // debugging purpose only!
+            System.out.println("Recieve message from server: " + serverMsg); // debugging purpose only!
             // TODO: Save the msg to a queue instead
         } catch (Exception ex) {
             try { Thread.sleep(SLEEP_MS); }
@@ -49,9 +50,5 @@ public class NetworkClient implements Observer {
         while (isRunning) {
             receiveMessageFromServer();
         }
-    }
-
-    public void updateObserver(){
-
     }
 }
